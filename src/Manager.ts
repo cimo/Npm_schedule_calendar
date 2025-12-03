@@ -1,4 +1,5 @@
 // Source
+import * as helperSrc from "./HelperSrc";
 import * as model from "./Model";
 
 export default class Manager {
@@ -17,29 +18,97 @@ export default class Manager {
     private elementTitle: HTMLDivElement | null;
     private elementButtonForward: HTMLButtonElement | null;
     private elementSelectYear: HTMLSelectElement | null;
+    private elementButtonToday: HTMLButtonElement | null;
     private elementWeekday: HTMLDivElement | null;
     private elementDay: HTMLDivElement | null;
 
     private childrenStyle = (): void => {
         const elementStyle = document.createElement("style");
 
-        elementStyle.className = "csc_style";
-        /*elementStyle.textContent = `
-            .cal-wrapper { inline-size: 360px; }
-            .cal-toolbar { display: flex; align-items: center; gap: 8px; margin-block-end: 8px; }
-            .cal-title   { flex: 1; font-weight: 600; text-transform: capitalize; }
-            .cal-nav     { border: 1px solid #c7c7c7; background: #fff; padding: 4px 8px; border-radius: 6px; cursor: pointer; }
-            .cal-nav:disabled { opacity: 0.5; cursor: not-allowed; }
-            .cal-year    { border: 1px solid #c7c7c7; padding: 4px 8px; border-radius: 6px; }
-            .cal-grid    { display: block; }
-            .cal-weekdays, .cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-            .cal-weekday { text-align: center; font-weight: 600; color: #444; padding: 6px 0; }
-            .cal-cell    { aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-                            border-radius: 8px; font-weight: 500; color: #222; }
-            .cal-cell:hover { background: #f3f3f3; }
-            .cal-cell.today { outline: 2px solid #0078D4; background: #E5F1FB; font-weight: 700; }
-            .cal-cell.empty { color: transparent; pointer-events: none; }
-        `;*/
+        elementStyle.textContent = `
+            .csc_wrapper {
+                margin: 20px;
+            }
+            .csc_toolbar {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-block-end: 8px;
+            }
+            .csc_title {
+                flex: 1;
+                font-weight: 600;
+                text-transform: capitalize;
+                text-align: center;
+                font-size: 24px;
+            }
+            .csc_button {
+                border: 1px solid #c7c7c7;
+                background-color: #33b215 !important;
+                color: #ffffff;
+                border-radius: 4px;
+                box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.4);
+                cursor: pointer;
+                width: 40px;
+                height: 40px;
+                text-align: center;
+                vertical-align: middle;
+            }
+            .csc_button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+            .csc_year {
+                border: 1px solid #c7c7c7;
+                background-color: #33b215 !important;
+                color: #ffffff;
+                border-radius: 4px;
+                box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.4);
+                cursor: pointer;
+                padding: 5px;
+            }
+            .csc_year option {
+                color: #000000;
+                background-color: #ffffff;
+            }
+            .csc_page {
+                box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.4);
+                padding: 10px;
+            }
+            .csc_weekday, .csc_day {
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                gap: 4px;
+            }
+            .csc_weekday {
+                text-align: center;
+                font-weight: 600;
+                color: #444444;
+                padding: 6px 0;
+            }
+            .csc_cell {
+                aspect-ratio: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 4px;
+                color: #222222;
+                border: 1px solid #c7c7c7;
+            }
+            .csc_cell.csc_today {
+                outline: 2px solid #0078d4;
+                background: #e5f1fb;
+                font-weight: 700;
+            }
+            .csc_cell.csc_empty {
+                color: transparent;
+                pointer-events: none;
+                border: none;
+            }
+            .csc_cell:hover {
+                background: #f3f3f3;
+            }
+        `;
 
         document.head.appendChild(elementStyle);
     };
@@ -48,6 +117,8 @@ export default class Manager {
         const elementContainer: HTMLElement | null = document.querySelector(this.containerTag);
 
         if (!elementContainer) {
+            helperSrc.writeLog("@cimo/schedule_calendar - Manager.ts - initializeHtml()", "Not found: 'elementContainer'!");
+
             return;
         }
 
@@ -59,9 +130,8 @@ export default class Manager {
                     <button class="csc_button csc_back" type="button">‹</button>
                     <div class="csc_title"></div>
                     <button class="csc_button csc_forward" type="button">›</button>
-                    <label class="csc_year_label">
-                        <select class="csc_year"></select>
-                    </label>
+                    <select class="csc_year"></select>
+                    <button class="csc_button csc_today" type="button">[#]</button>
                 </div>
                 <div class="csc_page">
                     <div class="csc_weekday"></div>
@@ -70,14 +140,17 @@ export default class Manager {
             </div>
         `;
 
-        this.elementButtonBack = elementContainer.querySelector<HTMLButtonElement>(".prev");
-        this.elementTitle = elementContainer.querySelector<HTMLDivElement>(".cal-title");
-        this.elementButtonForward = elementContainer.querySelector<HTMLButtonElement>(".next");
-        this.elementSelectYear = elementContainer.querySelector<HTMLSelectElement>(".cal-year");
-        this.elementWeekday = elementContainer.querySelector<HTMLDivElement>(".cal-weekdays");
-        this.elementDay = elementContainer.querySelector<HTMLDivElement>(".cal-days");
+        this.elementButtonBack = elementContainer.querySelector<HTMLButtonElement>(".csc_back");
+        this.elementTitle = elementContainer.querySelector<HTMLDivElement>(".csc_title");
+        this.elementButtonForward = elementContainer.querySelector<HTMLButtonElement>(".csc_forward");
+        this.elementSelectYear = elementContainer.querySelector<HTMLSelectElement>(".csc_year");
+        this.elementButtonToday = elementContainer.querySelector<HTMLButtonElement>(".csc_today");
+        this.elementWeekday = elementContainer.querySelector<HTMLDivElement>(".csc_weekday");
+        this.elementDay = elementContainer.querySelector<HTMLDivElement>(".csc_day");
 
         if (!this.elementSelectYear || !this.elementSelectYear) {
+            helperSrc.writeLog("@cimo/schedule_calendar - Manager.ts - initializeHtml()", "Not found: 'elementSelectYear' or 'elementSelectYear'!");
+
             return;
         }
 
@@ -99,14 +172,17 @@ export default class Manager {
             !this.elementTitle ||
             !this.elementButtonForward ||
             !this.elementSelectYear ||
+            !this.elementButtonToday ||
             !this.elementWeekday ||
             !this.elementDay
         ) {
+            helperSrc.writeLog("@cimo/schedule_calendar - Manager.ts - render()", "Not found render element!");
+
             return;
         }
 
-        if (this.taskList) {
-            this.taskList(this.yearCurrent, this.monthCurrent);
+        if (this.callbackCurrent) {
+            this.callbackCurrent(this.yearCurrent, this.monthCurrent);
         }
 
         this.elementTitle.textContent = new Intl.DateTimeFormat(this.option.locale, { month: "long", year: "numeric" }).format(
@@ -120,13 +196,15 @@ export default class Manager {
         const dayTotal = new Date(this.yearCurrent, this.monthCurrent + 1, 0).getDate();
         const offset = this.option.isStartOnMonday ? (dayFirst === 0 ? 6 : dayFirst - 1) : dayFirst;
 
-        this.weekdayList = offset === 0 ? this.weekdayList.slice(offset).concat(this.weekdayList.slice(0, offset)) : this.weekdayList.slice();
+        if (offset === 1) {
+            this.weekdayList = this.weekdayList.slice(6).concat(this.weekdayList.slice(0, 6));
+        }
 
-        for (const weekdayLabel of this.weekdayList) {
+        for (const weekday of this.weekdayList) {
             const elementDiv = document.createElement("div");
 
-            elementDiv.className = "csc_weekday";
-            elementDiv.textContent = weekdayLabel;
+            elementDiv.className = "csc_weekday_label";
+            elementDiv.textContent = weekday;
 
             this.elementWeekday.appendChild(elementDiv);
         }
@@ -140,12 +218,6 @@ export default class Manager {
 
             if (dayNumber > 0 && dayNumber <= dayTotal) {
                 elementDiv.innerHTML = `<p>${dayNumber}</p>`;
-                /*elementDiv.setAttribute(
-                    "aria-label",
-                    new Intl.DateTimeFormat(this.option.locale, { day: "numeric", month: "long", year: "numeric" }).format(
-                        new Date(this.yearCurrent, this.monthCurrent, dayNumber)
-                    )
-                );*/
 
                 if (
                     this.option.isHighlightToday &&
@@ -156,8 +228,8 @@ export default class Manager {
                     elementDiv.classList.add("csc_today");
                 }
 
-                if (this.taskButton) {
-                    this.taskButton(elementDiv, dayNumber);
+                if (this.callbackCell) {
+                    this.callbackCell(elementDiv, dayNumber);
                 }
             } else {
                 if (a % 7 === 0 && dayNumber > dayTotal) {
@@ -178,7 +250,12 @@ export default class Manager {
     };
 
     private event = (): void => {
-        if (!this.elementButtonBack || !this.elementButtonForward || !this.elementSelectYear) {
+        if (!this.elementButtonBack || !this.elementButtonForward || !this.elementSelectYear || !this.elementButtonToday) {
+            helperSrc.writeLog(
+                "@cimo/schedule_calendar - Manager.ts - event()",
+                "Not found: 'elementButtonBack' or 'elementButtonForward' or 'elementSelectYear' or 'elementButtonToday'!"
+            );
+
             return;
         }
 
@@ -222,6 +299,15 @@ export default class Manager {
 
             this.render();
         });
+
+        this.elementButtonToday.addEventListener("click", () => {
+            this.date = new Date();
+
+            this.yearCurrent = this.date.getFullYear();
+            this.monthCurrent = this.date.getMonth();
+
+            this.render();
+        });
     };
 
     constructor(optionValue: model.Ioption, containerTagValue: string) {
@@ -240,20 +326,23 @@ export default class Manager {
         this.elementTitle = null;
         this.elementButtonForward = null;
         this.elementSelectYear = null;
+        this.elementButtonToday = null;
         this.elementWeekday = null;
         this.elementDay = null;
+    }
 
+    callbackCurrent?: (year: number, month: number) => void;
+    callbackCell?: (elementDiv: HTMLDivElement, dayNumber: number) => void;
+
+    setWeekdayList = (value: string[]): void => {
+        this.weekdayList = value;
+    };
+
+    create = (): void => {
         this.initializeHtml();
 
         this.render();
 
         this.event();
-    }
-
-    setWeekdayList = (value: string[]) => {
-        this.weekdayList = value;
     };
-
-    taskList: ((year: number, month: number) => void) | null = null;
-    taskButton: ((elementDiv: HTMLDivElement, dayNumber: number) => void) | null = null;
 }
