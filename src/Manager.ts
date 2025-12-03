@@ -42,7 +42,7 @@ export default class Manager {
         `;*/
 
         document.head.appendChild(elementStyle);
-    }
+    };
 
     private initializeHtml = (): void => {
         const elementContainer: HTMLElement | null = document.querySelector(this.containerTag);
@@ -91,10 +91,17 @@ export default class Manager {
 
             this.elementSelectYear.appendChild(elementOption);
         }
-    }
+    };
 
     private render = (): void => {
-        if (!this.elementButtonBack || !this.elementTitle || !this.elementButtonForward || !this.elementSelectYear || !this.elementWeekday || !this.elementDay) {
+        if (
+            !this.elementButtonBack ||
+            !this.elementTitle ||
+            !this.elementButtonForward ||
+            !this.elementSelectYear ||
+            !this.elementWeekday ||
+            !this.elementDay
+        ) {
             return;
         }
 
@@ -102,7 +109,9 @@ export default class Manager {
             this.taskList(this.yearCurrent, this.monthCurrent);
         }
 
-        this.elementTitle.textContent = new Intl.DateTimeFormat(this.option.locale, { month: "long", year: "numeric" }).format(new Date(this.yearCurrent, this.monthCurrent, 1));
+        this.elementTitle.textContent = new Intl.DateTimeFormat(this.option.locale, { month: "long", year: "numeric" }).format(
+            new Date(this.yearCurrent, this.monthCurrent, 1)
+        );
 
         this.elementWeekday.innerHTML = "";
         this.elementDay.innerHTML = "";
@@ -138,7 +147,12 @@ export default class Manager {
                     )
                 );*/
 
-                if (this.option.isHighlightToday && dayNumber === this.date.getDate() && this.monthCurrent === this.date.getMonth() && this.yearCurrent === this.date.getFullYear()) {
+                if (
+                    this.option.isHighlightToday &&
+                    dayNumber === this.date.getDate() &&
+                    this.monthCurrent === this.date.getMonth() &&
+                    this.yearCurrent === this.date.getFullYear()
+                ) {
                     elementDiv.classList.add("csc_today");
                 }
 
@@ -161,7 +175,7 @@ export default class Manager {
         this.elementButtonForward.disabled = this.yearCurrent === this.yearMax && this.monthCurrent === 11;
 
         this.elementSelectYear.value = this.yearCurrent.toString();
-    }
+    };
 
     private event = (): void => {
         if (!this.elementButtonBack || !this.elementButtonForward || !this.elementSelectYear) {
@@ -208,12 +222,12 @@ export default class Manager {
 
             this.render();
         });
-    }
-    
+    };
+
     constructor(optionValue: model.Ioption, containerTagValue: string) {
         this.option = optionValue;
         this.containerTag = containerTagValue;
-        
+
         this.weekdayList = [];
 
         this.date = new Date();
@@ -238,7 +252,7 @@ export default class Manager {
 
     setWeekdayList = (value: string[]) => {
         this.weekdayList = value;
-    }
+    };
 
     taskList: ((year: number, month: number) => void) | null = null;
     taskButton: ((elementDiv: HTMLDivElement, dayNumber: number) => void) | null = null;
