@@ -30,7 +30,7 @@ import { Csc } from "@cimo/schedule_calendar/dist/src/Main";
 
 ...
 
-Csc.create(xxx);
+const csc = new Csc();
 
 ...
 
