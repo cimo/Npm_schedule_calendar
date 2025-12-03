@@ -1,0 +1,12 @@
+{
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "l13Diff.exclude": [
+        ".git",
+        "build",
+        "dist",
+        "node_modules"
+    ],
+    "l13Diff.ignoreEndOfLine": false,
+    "l13Diff.ignoreTrimWhitespace": "default",
+    "l13Diff.ignoreByteOrderMark": false
+}
