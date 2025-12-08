@@ -63,9 +63,20 @@ export default class Manager {
                     opacity: 0.5;
                     cursor: not-allowed;
                 }
+                .csc_button.csc_today {
+                    padding: 5px;
+                    width: auto;
+                }
+                .csc_button.csc_today::before {
+                    content: "Today"
+                }
+                .csc_button.csc_forward p,
+                .csc_button.csc_back p {
+                    display: grid;
+                    font-size: 30px;
+                }
                 .csc_year {
                     border: 1px solid #c7c7c7;
-                    color: #ffffff;
                     border-radius: 4px;
                     box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.4);
                     cursor: pointer;
@@ -120,11 +131,11 @@ export default class Manager {
         elementContainer.innerHTML = `
             <div class="csc_wrapper">
                 <div class="csc_toolbar">
-                    <button class="csc_button csc_back" type="button">‹</button>
+                    <button class="csc_button csc_back" type="button"><p><</p></button>
                     <div class="csc_title"></div>
-                    <button class="csc_button csc_forward" type="button">›</button>
+                    <button class="csc_button csc_forward" type="button"><p>></p></button>
                     <select class="csc_year"></select>
-                    <button class="csc_button csc_today" type="button">[#]</button>
+                    <button class="csc_button csc_today" type="button"></button>
                 </div>
                 <div class="csc_page">
                     <div class="csc_weekday"></div>
@@ -153,8 +164,8 @@ export default class Manager {
         this.elementWeekday = elementContainer.querySelector<HTMLDivElement>(".csc_weekday");
         this.elementDay = elementContainer.querySelector<HTMLDivElement>(".csc_day");
 
-        if (!this.elementSelectYear || !this.elementSelectYear) {
-            helperSrc.writeLog("@cimo/schedule_calendar - Manager.ts - initializeHtml()", "Not found: 'elementSelectYear' or 'elementSelectYear'!");
+        if (!this.elementSelectYear) {
+            helperSrc.writeLog("@cimo/schedule_calendar - Manager.ts - initializeHtml()", "Not found: 'elementSelectYear'!");
 
             return;
         }
@@ -197,15 +208,11 @@ export default class Manager {
         this.elementWeekday.innerHTML = "";
         this.elementDay.innerHTML = "";
 
-        const dayFirst = new Date(this.yearCurrent, this.monthCurrent, 1).getDay();
-        const dayTotal = new Date(this.yearCurrent, this.monthCurrent + 1, 0).getDate();
-        const offset = this.option.isStartOnMonday ? (dayFirst === 0 ? 6 : dayFirst - 1) : dayFirst;
+        const weekdayLabelList = this.option.isStartOnMonday
+            ? this.weekdayList.slice(1).concat(this.weekdayList.slice(0, 1))
+            : this.weekdayList.slice();
 
-        if (offset === 1) {
-            this.weekdayList = this.weekdayList.slice(6).concat(this.weekdayList.slice(0, 6));
-        }
-
-        for (const weekday of this.weekdayList) {
+        for (const weekday of weekdayLabelList) {
             const elementDiv = document.createElement("div");
 
             elementDiv.className = "csc_weekday_label";
@@ -213,6 +220,10 @@ export default class Manager {
 
             this.elementWeekday.appendChild(elementDiv);
         }
+
+        const dayFirst = new Date(this.yearCurrent, this.monthCurrent, 1).getDay();
+        const dayTotal = new Date(this.yearCurrent, this.monthCurrent + 1, 0).getDate();
+        const offset = this.option.isStartOnMonday ? (dayFirst === 0 ? 6 : dayFirst - 1) : dayFirst;
 
         for (let a = 0; a < 42; a++) {
             const elementDiv = document.createElement("div");
@@ -319,7 +330,7 @@ export default class Manager {
         this.option = optionValue;
         this.containerTag = containerTagValue;
 
-        this.locale = "ja-JP";
+        this.locale = "en-US";
         this.weekdayList = [];
 
         this.date = new Date();
