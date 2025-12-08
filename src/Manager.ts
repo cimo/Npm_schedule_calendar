@@ -6,6 +6,7 @@ export default class Manager {
     private option: model.Ioption;
     private containerTag: string;
 
+    private locale: string;
     private weekdayList: string[];
 
     private date: Date;
@@ -185,7 +186,7 @@ export default class Manager {
             this.callbackCurrent(this.yearCurrent, this.monthCurrent);
         }
 
-        this.elementTitle.textContent = new Intl.DateTimeFormat(this.option.locale, { month: "long", year: "numeric" }).format(
+        this.elementTitle.textContent = new Intl.DateTimeFormat(this.locale, { month: "long", year: "numeric" }).format(
             new Date(this.yearCurrent, this.monthCurrent, 1)
         );
 
@@ -314,6 +315,7 @@ export default class Manager {
         this.option = optionValue;
         this.containerTag = containerTagValue;
 
+        this.locale = "ja-JP";
         this.weekdayList = [];
 
         this.date = new Date();
@@ -334,6 +336,10 @@ export default class Manager {
     callbackCurrent?: (year: number, month: number) => void;
     callbackCell?: (elementDiv: HTMLDivElement, dayNumber: number) => void;
 
+    setLocal = (value: string): void => {
+        this.locale = value;
+    };
+
     setWeekdayList = (value: string[]): void => {
         this.weekdayList = value;
     };
@@ -341,6 +347,12 @@ export default class Manager {
     create = (): void => {
         this.initializeHtml();
 
+        this.render();
+
+        this.event();
+    };
+
+    update = (): void => {
         this.render();
 
         this.event();
