@@ -35,20 +35,17 @@ const csc = new Csc(
     ".calendar"
 );
 
-csc.setLocale("js-JP");
+csc.setLocale("ja-JP");
 csc.setWeekdayList(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]);
 
 csc.callbackCurrent = (year: number, month: number) => {
     console.log("callbackCurrent", year, month);
 };
-
 csc.callbackCell = (elementDiv: HTMLDivElement, day: number) => {
     console.log("callbackCell", elementDiv, day);
 };
 
-csc.create();
-
-// csc.update();
+csc.view();
 
 ...
 

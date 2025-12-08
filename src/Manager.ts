@@ -23,107 +23,99 @@ export default class Manager {
     private elementWeekday: HTMLDivElement | null;
     private elementDay: HTMLDivElement | null;
 
-    private childrenStyle = (): void => {
-        const elementStyle = document.createElement("style");
+    private populateHtml = (elementContainer: HTMLElement): void => {
+        const idStyle = "csc_style";
 
-        elementStyle.textContent = `
-            .csc_wrapper {
-                margin: 20px;
-            }
-            .csc_toolbar {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                margin-block-end: 8px;
-            }
-            .csc_title {
-                flex: 1;
-                font-weight: 600;
-                text-transform: capitalize;
-                text-align: center;
-                font-size: 24px;
-            }
-            .csc_button {
-                border: 1px solid #c7c7c7;
-                background-color: #33b215 !important;
-                color: #ffffff;
-                border-radius: 4px;
-                box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.4);
-                cursor: pointer;
-                width: 40px;
-                height: 40px;
-                text-align: center;
-                vertical-align: middle;
-            }
-            .csc_button:disabled {
-                opacity: 0.5;
-                cursor: not-allowed;
-            }
-            .csc_year {
-                border: 1px solid #c7c7c7;
-                background-color: #33b215 !important;
-                color: #ffffff;
-                border-radius: 4px;
-                box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.4);
-                cursor: pointer;
-                padding: 5px;
-            }
-            .csc_year option {
-                color: #000000;
-                background-color: #ffffff;
-            }
-            .csc_page {
-                box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.4);
-                padding: 10px;
-            }
-            .csc_weekday, .csc_day {
-                display: grid;
-                grid-template-columns: repeat(7, 1fr);
-                gap: 4px;
-            }
-            .csc_weekday {
-                text-align: center;
-                font-weight: 600;
-                color: #444444;
-                padding: 6px 0;
-            }
-            .csc_cell {
-                aspect-ratio: 1;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 4px;
-                color: #222222;
-                border: 1px solid #c7c7c7;
-            }
-            .csc_cell.csc_today {
-                outline: 2px solid #0078d4;
-                background: #e5f1fb;
-                font-weight: 700;
-            }
-            .csc_cell.csc_empty {
-                color: transparent;
-                pointer-events: none;
-                border: none;
-            }
-            .csc_cell:hover {
-                background: #f3f3f3;
-            }
-        `;
+        if (!document.getElementById(idStyle)) {
+            const elementStyle = document.createElement("style");
+            elementStyle.id = idStyle;
 
-        document.head.appendChild(elementStyle);
-    };
+            elementStyle.textContent = `
+                .csc_wrapper {
+                    margin: 20px;
+                }
+                .csc_toolbar {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    margin-block-end: 8px;
+                }
+                .csc_title {
+                    flex: 1;
+                    font-weight: 600;
+                    text-transform: capitalize;
+                    text-align: center;
+                    font-size: 24px;
+                }
+                .csc_button {
+                    border: 1px solid #c7c7c7;
+                    background-color: #33b215 !important;
+                    color: #ffffff;
+                    border-radius: 4px;
+                    box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.4);
+                    cursor: pointer;
+                    width: 40px;
+                    height: 40px;
+                    text-align: center;
+                    vertical-align: middle;
+                }
+                .csc_button:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                }
+                .csc_year {
+                    border: 1px solid #c7c7c7;
+                    color: #ffffff;
+                    border-radius: 4px;
+                    box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.4);
+                    cursor: pointer;
+                    padding: 5px;
+                }
+                .csc_year option {
+                    color: #000000;
+                }
+                .csc_page {
+                    background-color: #ffffff;
+                    box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.4);
+                    padding: 10px;
+                }
+                .csc_weekday, .csc_day {
+                    display: grid;
+                    grid-template-columns: repeat(7, 1fr);
+                    gap: 4px;
+                }
+                .csc_weekday {
+                    text-align: center;
+                    font-weight: 600;
+                    color: #444444;
+                    padding: 6px 0;
+                }
+                .csc_cell {
+                    aspect-ratio: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 4px;
+                    color: #222222;
+                    border: 1px solid #c7c7c7;
+                }
+                .csc_cell.csc_today {
+                    outline: 2px solid #0078d4;
+                    background: #e5f1fb;
+                    font-weight: 700;
+                }
+                .csc_cell.csc_empty {
+                    color: transparent;
+                    pointer-events: none;
+                    border: none;
+                }
+                .csc_cell:hover {
+                    background: #f3f3f3;
+                }
+            `;
 
-    private initializeHtml = (): void => {
-        const elementContainer: HTMLElement | null = document.querySelector(this.containerTag);
-
-        if (!elementContainer) {
-            helperSrc.writeLog("@cimo/schedule_calendar - Manager.ts - initializeHtml()", "Not found: 'elementContainer'!");
-
-            return;
+            document.head.appendChild(elementStyle);
         }
-
-        this.childrenStyle();
 
         elementContainer.innerHTML = `
             <div class="csc_wrapper">
@@ -140,6 +132,18 @@ export default class Manager {
                 </div>
             </div>
         `;
+    };
+
+    private initializeHtml = (): void => {
+        const elementContainer: HTMLElement | null = document.querySelector(this.containerTag);
+
+        if (!elementContainer) {
+            helperSrc.writeLog("@cimo/schedule_calendar - Manager.ts - initializeHtml()", "Not found: 'elementContainer'!");
+
+            return;
+        }
+
+        this.populateHtml(elementContainer);
 
         this.elementButtonBack = elementContainer.querySelector<HTMLButtonElement>(".csc_back");
         this.elementTitle = elementContainer.querySelector<HTMLDivElement>(".csc_title");
@@ -344,15 +348,9 @@ export default class Manager {
         this.weekdayList = value;
     };
 
-    create = (): void => {
+    view = (): void => {
         this.initializeHtml();
 
-        this.render();
-
-        this.event();
-    };
-
-    update = (): void => {
         this.render();
 
         this.event();
