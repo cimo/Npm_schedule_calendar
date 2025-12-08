@@ -336,7 +336,7 @@ export default class Manager {
     callbackCurrent?: (year: number, month: number) => void;
     callbackCell?: (elementDiv: HTMLDivElement, dayNumber: number) => void;
 
-    setLocal = (value: string): void => {
+    setLocale = (value: string): void => {
         this.locale = value;
     };
 
