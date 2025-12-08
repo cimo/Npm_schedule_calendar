@@ -177,7 +177,7 @@ export default class Manager {
             !this.elementWeekday ||
             !this.elementDay
         ) {
-            helperSrc.writeLog("@cimo/schedule_calendar - Manager.ts - render()", "Not found render element!");
+            helperSrc.writeLog("@cimo/schedule_calendar - Manager.ts - render()", "Not found: render element!");
 
             return;
         }
@@ -215,25 +215,25 @@ export default class Manager {
 
             elementDiv.className = "csc_cell";
 
-            const dayNumber = a - offset + 1;
+            const day = a - offset + 1;
 
-            if (dayNumber > 0 && dayNumber <= dayTotal) {
-                elementDiv.innerHTML = `<p>${dayNumber}</p>`;
+            if (day > 0 && day <= dayTotal) {
+                elementDiv.innerHTML = `<p>${day}</p>`;
 
                 if (
                     this.option.isHighlightToday &&
-                    dayNumber === this.date.getDate() &&
-                    this.monthCurrent === this.date.getMonth() &&
-                    this.yearCurrent === this.date.getFullYear()
+                    day === this.date.getDate() &&
+                    this.yearCurrent === this.date.getFullYear() &&
+                    this.monthCurrent === this.date.getMonth()
                 ) {
                     elementDiv.classList.add("csc_today");
                 }
 
                 if (this.callbackCell) {
-                    this.callbackCell(elementDiv, dayNumber);
+                    this.callbackCell(elementDiv, day);
                 }
             } else {
-                if (a % 7 === 0 && dayNumber > dayTotal) {
+                if (a % 7 === 0 && day > dayTotal) {
                     break;
                 }
 

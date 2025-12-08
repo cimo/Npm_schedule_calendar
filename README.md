@@ -41,8 +41,9 @@ csc.setWeekdayList(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]);
 csc.callbackCurrent = (year: number, month: number) => {
     console.log("callbackCurrent", year, month);
 };
-csc.callbackCell = (elementDiv: HTMLDivElement, dayNumber: number) => {
-    console.log("callbackCell", elementDiv, dayNumber);
+
+csc.callbackCell = (elementDiv: HTMLDivElement, day: number) => {
+    console.log("callbackCell", elementDiv, day);
 };
 
 csc.create();
