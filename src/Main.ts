@@ -1,4 +1,4 @@
-import Csc from "./Manager";
+import Csc from "./Manager.js";
 
-export * as CscModel from "./Model";
+export * as CscModel from "./Model.js";
 export { Csc };
