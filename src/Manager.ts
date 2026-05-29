@@ -212,7 +212,9 @@ export default class Manager {
             ? this.weekdayList.slice(1).concat(this.weekdayList.slice(0, 1))
             : this.weekdayList.slice();
 
-        for (const weekday of weekdayLabelList) {
+        for (let a = 0; a < weekdayLabelList.length; a++) {
+            const weekday = weekdayLabelList[a];
+
             const elementDiv = document.createElement("div");
 
             elementDiv.className = "csc_weekday_label";
